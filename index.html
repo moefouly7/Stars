@@ -1,128 +1,354 @@
 <!DOCTYPE html>
+
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نجوم السما</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: linear-gradient(to bottom, #8b0000, #ffb6c1); /* سماء حمراء إلى وردي */
-            height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: relative;
-        }
-        .floating-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .floating-item {
-            position: absolute;
-            animation: floatUp linear infinite;
-            opacity: 0.6;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(100vh) rotate(0deg); }
-            100% { transform: translateY(-10vh) rotate(360deg); }
-        }
-        .star {
-            position: absolute;
-            font-size: 2rem;
-            cursor: pointer;
-            z-index: 10;
-            text-shadow: 0 0 15px #fff, 0 0 20px gold;
-            animation: twinkle 1.5s infinite alternate;
-            transition: transform 0.2s;
-        }
-        .star:hover {
-            transform: scale(1.5);
-        }
-        @keyframes twinkle {
-            0% { opacity: 0.4; text-shadow: 0 0 5px #fff; }
-            100% { opacity: 1; text-shadow: 0 0 20px #fff, 0 0 30px gold; }
-        }
-        #message-box {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px 40px;
-            border-radius: 25px;
-            border: 3px solid #ff1493;
-            box-shadow: 0 0 30px rgba(255, 20, 147, 0.6);
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #8b0000;
-            text-align: center;
-            z-index: 20;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            pointer-events: none;
-        }
-        #message-box.show {
-            transform: translate(-50%, -50%) scale(1);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a0010">
+<title>نجوم الحب ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,700;1,700&family=Tajawal:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+width:100vw;height:100vh;
+overflow:hidden;
+font-family:‘Tajawal’,sans-serif;
+background:radial-gradient(ellipse 120% 80% at 50% 0%,#5a0020 0%,#1a000a 55%,#0a0005 100%);
+position:relative;
+}
+
+/* ── TINY BG STARS ── */
+.bg-star{
+position:absolute;border-radius:50%;
+background:#fff;pointer-events:none;
+animation:twinkle ease-in-out infinite;
+}
+@keyframes twinkle{0%,100%{opacity:.08;}50%{opacity:.9;}}
+
+/* ── FLOATING PARTICLES ── */
+.fp{
+position:absolute;pointer-events:none;opacity:0;
+animation:fpUp linear infinite;
+}
+@keyframes fpUp{
+0%{opacity:0;transform:translateY(0);}
+8%{opacity:1;}85%{opacity:.2;}
+100%{opacity:0;transform:translateY(-105vh) rotate(20deg);}
+}
+
+/* ── FIXED PANDAS ── */
+.panda{
+position:fixed;pointer-events:none;
+font-size:2.4rem;opacity:.45;
+animation:sway ease-in-out infinite;
+}
+@keyframes sway{0%,100%{transform:rotate(-10deg);}50%{transform:rotate(10deg) scale(1.08);}}
+
+/* ── CANVAS ── */
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:1;}
+
+/* ── STAR ── */
+.star{
+position:absolute;z-index:2;
+font-size:30px;cursor:pointer;
+transition:transform .18s,filter .18s;
+filter:drop-shadow(0 0 6px rgba(255,80,120,.7));
+-webkit-tap-highlight-color:transparent;
+}
+.star:hover{transform:scale(1.35);}
+.star.done{
+filter:drop-shadow(0 0 14px rgba(255,180,200,1));
+animation:starDone .4s ease;
+cursor:default;
+}
+@keyframes starDone{
+0%{transform:scale(1);}
+50%{transform:scale(1.6);}
+100%{transform:scale(1.15);}
+}
+
+/* ── COUNTER ── */
+.counter{
+position:fixed;top:16px;left:50%;transform:translateX(-50%);
+z-index:50;pointer-events:none;
+font-family:‘Amiri’,serif;font-style:italic;
+font-size:.82rem;color:rgba(255,160,180,.65);
+letter-spacing:.2em;
+transition:color .4s;
+}
+.counter.done{color:#ff6b8a;text-shadow:0 0 12px rgba(255,80,120,.7);}
+
+/* ── POPUP MESSAGE ── */
+.msg{
+position:fixed;top:50%;left:50%;
+transform:translate(-50%,-50%) scale(.4) rotate(-6deg);
+z-index:100;pointer-events:none;
+opacity:0;
+transition:transform .45s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+white-space:nowrap;
+}
+.msg.show{
+transform:translate(-50%,-50%) scale(1) rotate(0deg);
+opacity:1;
+}
+.msg-inner{
+background:linear-gradient(140deg,#1e0008,#2d0010);
+border:2px solid rgba(255,80,120,.5);
+border-radius:22px;padding:18px 32px;
+text-align:center;
+box-shadow:0 0 50px rgba(200,0,50,.55),inset 0 0 20px rgba(255,60,100,.06);
+position:relative;overflow:hidden;
+}
+.msg-inner::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:2.5px;
+background:linear-gradient(90deg,#c2335a,#ff6b8a,#ffb3c6,#ff6b8a,#c2335a);
+background-size:300% auto;animation:shimmer 2.5s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:300%}}
+.msg-panda{font-size:2rem;display:block;margin-bottom:6px;animation:bounce 1.4s ease-in-out infinite;}
+@keyframes bounce{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg) translateY(-5px);}}
+.msg-text{
+font-family:‘Amiri’,serif;font-style:italic;font-weight:700;
+font-size:1.6rem;color:#ff8fab;
+text-shadow:0 0 12px rgba(255,100,140,.6);
+display:block;
+}
+.msg-hearts{font-size:1rem;margin-top:6px;letter-spacing:.2em;}
+
+/* ── FINAL OVERLAY ── */
+.final{
+position:fixed;inset:0;z-index:200;
+background:rgba(8,0,12,.9);
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;gap:18px;
+opacity:0;pointer-events:none;
+transition:opacity .7s;
+}
+.final.show{opacity:1;pointer-events:auto;}
+.final-text{
+font-family:‘Amiri’,serif;font-style:italic;font-weight:700;
+font-size:2rem;color:#ff6b8a;text-align:center;line-height:1.8;
+text-shadow:0 0 30px rgba(255,80,120,.8);
+animation:pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.04);}}
+.final-pandas{font-size:2.4rem;letter-spacing:.4em;animation:pulse 1.4s ease-in-out infinite;}
+.final-btn{
+background:linear-gradient(135deg,#c2335a,#ff6b8a);
+border:none;border-radius:50px;
+color:#fff;font-family:‘Tajawal’,sans-serif;
+font-size:1rem;font-weight:700;
+padding:13px 34px;cursor:pointer;
+box-shadow:0 8px 28px rgba(200,0,50,.5);
+transition:transform .2s;
+}
+.final-btn:active{transform:scale(.96);}
+
+/* ── BURST ── */
+.burst{
+position:fixed;pointer-events:none;z-index:9999;
+animation:burstOut 1s ease-out forwards;
+}
+@keyframes burstOut{
+0%{opacity:1;transform:translate(0,0) scale(1.3);}
+100%{opacity:0;transform:translate(var(–bx),var(–by)) scale(.1);}
+}
+</style>
+
 </head>
 <body>
 
-    <div class="floating-bg" id="bg-container"></div>
-    <div id="stars-container"></div>
-    <div id="message-box"></div>
+<!-- CANVAS for connecting lines -->
 
-    <script>
-        const phrases = [
-            "بحبك", "ضحكتك", "شجاعتك", "حنانك عليا", 
-            "اهتمامك بيا", "فهمك ليا", "حلوة في كل الأوقات", 
-            "عنادك", "عصبيتك", "طريقة كلامك", "هدوئك", "باندتي 🐼"
-        ];
+<canvas id="canvas"></canvas>
 
-        const bgContainer = document.getElementById('bg-container');
-        const starsContainer = document.getElementById('stars-container');
-        const messageBox = document.getElementById('message-box');
+<!-- PANDAS -->
 
-        // إنشاء القلوب والباندا العائمة في الخلفية
-        const items = ['❤️', '🐼', '💖', '🐼', '💕'];
-        for (let i = 0; i < 40; i++) {
-            let el = document.createElement('div');
-            el.className = 'floating-item';
-            el.innerText = items[Math.floor(Math.random() * items.length)];
-            el.style.left = Math.random() * 100 + 'vw';
-            el.style.animationDuration = (Math.random() * 15 + 8) + 's'; // سرعات مختلفة
-            el.style.animationDelay = Math.random() * 5 + 's';
-            el.style.fontSize = (Math.random() * 2 + 1) + 'rem';
-            bgContainer.appendChild(el);
-        }
+<div class="panda" style="top:10px;right:10px;animation-duration:3.8s">🐼</div>
+<div class="panda" style="top:10px;left:10px;animation-duration:4.3s;animation-delay:.6s">🐼</div>
+<div class="panda" style="bottom:20px;right:12px;animation-duration:4.6s;animation-delay:1.2s">🐼</div>
+<div class="panda" style="bottom:20px;left:12px;animation-duration:3.7s;animation-delay:1.9s">🐼</div>
+<div class="panda" style="top:42%;right:4px;font-size:1.8rem;opacity:.35;animation-duration:5.1s;animation-delay:.3s">❤️</div>
+<div class="panda" style="top:42%;left:4px;font-size:1.8rem;opacity:.35;animation-duration:4.8s;animation-delay:.9s">❤️</div>
 
-        // توزيع النجوم بشكل عشوائي وربطها بالكلمات
-        phrases.forEach((phrase) => {
-            let star = document.createElement('div');
-            star.className = 'star';
-            star.innerText = '✨'; 
-            
-            // توزيع في الشاشة مع إبعادهم عن الحواف
-            star.style.left = (Math.random() * 80 + 10) + 'vw';
-            star.style.top = (Math.random() * 80 + 10) + 'vh';
-            star.style.animationDelay = Math.random() * 2 + 's';
+<!-- COUNTER -->
 
-            star.addEventListener('click', () => {
-                messageBox.innerText = phrase;
-                messageBox.classList.remove('show');
-                // ريستارت للأنيميشن
-                void messageBox.offsetWidth;
-                messageBox.classList.add('show');
-                
-                // إخفاء الرسالة بعد 3 ثواني
-                setTimeout(() => {
-                    messageBox.classList.remove('show');
-                }, 3000);
-            });
+<div class="counter" id="counter">0 / 12</div>
 
-            starsContainer.appendChild(star);
-        });
-    </script>
+<!-- STAR CONTAINER -->
+
+<div id="sky"></div>
+
+<!-- POPUP -->
+
+<div class="msg" id="msg">
+  <div class="msg-inner">
+    <span class="msg-panda" id="msgPanda">🐼</span>
+    <span class="msg-text"  id="msgText"></span>
+    <div  class="msg-hearts" id="msgHearts">❤️ 🌸 ❤️</div>
+  </div>
+</div>
+
+<!-- FINAL -->
+
+<div class="final" id="final">
+  <div class="final-text">كشفتي كل النجوم 🌟<br>لأنك نجمتي إنتي 💕</div>
+  <div class="final-pandas">🐼 ❤️ 🐼 ❤️ 🐼</div>
+  <button class="final-btn" onclick="document.getElementById('final').classList.remove('show')">يسلم قلبك 🌹</button>
+</div>
+
+<script>
+/* ═══ DATA ═══ */
+const WORDS = [
+  {t:'بحبك',               p:'🐼', h:'❤️ 💕 ❤️'},
+  {t:'ضحكتك',              p:'😊', h:'🌸 ❤️ 🌸'},
+  {t:'شجاعتك',             p:'🐼', h:'💕 ✨ 💕'},
+  {t:'حنانك عليا',         p:'🧸', h:'❤️ 🌸 ❤️'},
+  {t:'اهتمامك بيا',        p:'🐼', h:'💗 💕 💗'},
+  {t:'فهمك ليا',           p:'🌸', h:'❤️ ✨ ❤️'},
+  {t:'حلوة في كل الأوقات', p:'🐼', h:'🌸 💕 🌸'},
+  {t:'عنادك',              p:'😤', h:'❤️ 😂 ❤️'},
+  {t:'عصبيتك',             p:'🌶️', h:'💕 😅 💕'},
+  {t:'طريقة كلامك',        p:'🐼', h:'🌸 ❤️ 🌸'},
+  {t:'هدوئك',              p:'🌙', h:'💙 🌸 💙'},
+  {t:'باندتي',             p:'🐼', h:'🐼 ❤️ 🐼'},
+];
+
+/* heart-shape layout (% of viewport) */
+const POS = [
+  [50,12],[65,18],[78,28],[84,42],[80,57],
+  [68,70],[55,80],[45,80],[32,70],[20,57],
+  [16,42],[22,28]
+];
+
+/* ═══ CANVAS ═══ */
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+function resizeCanvas(){
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+/* ═══ BG TINY STARS ═══ */
+for(let i=0;i<130;i++){
+  const s=document.createElement('div');
+  s.className='bg-star';
+  const sz=.5+Math.random()*1.8;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.2+Math.random()*3}s;animation-delay:${-Math.random()*3}s;`;
+  document.body.appendChild(s);
+}
+
+/* ═══ FLOATING PARTICLES ═══ */
+['❤️','🌸','💕','🐼','💗','❤️','🐼','✨','💝','🌹'].forEach(ch=>{
+  for(let j=0;j<3;j++){
+    const el=document.createElement('div');el.className='fp';el.textContent=ch;
+    el.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${.6+Math.random()*.9}rem;filter:opacity(${.06+Math.random()*.14});animation-duration:${9+Math.random()*13}s;animation-delay:${-Math.random()*15}s;`;
+    document.body.appendChild(el);
+  }
+});
+
+/* ═══ BUILD STARS ═══ */
+const sky     = document.getElementById('sky');
+const points  = [];   /* clicked star positions for line drawing */
+let   clickCount = 0;
+let   msgTimer;
+
+POS.forEach((p, i) => {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.textContent = '⭐';
+
+  const x = (p[0]/100) * window.innerWidth  - 15;
+  const y = (p[1]/100) * window.innerHeight - 15;
+  star.style.left = x + 'px';
+  star.style.top  = y + 'px';
+
+  star.addEventListener('click', () => onStarClick(star, i, x+15, y+15));
+  star.addEventListener('touchstart', e => {
+    e.preventDefault();
+    onStarClick(star, i, x+15, y+15);
+  }, {passive:false});
+
+  sky.appendChild(star);
+});
+
+/* ═══ CLICK HANDLER ═══ */
+function onStarClick(star, i, cx, cy){
+  if(star.classList.contains('done')) return;
+
+  star.classList.add('done');
+  star.textContent = '🌟';
+  clickCount++;
+
+  /* update counter */
+  const cEl = document.getElementById('counter');
+  cEl.textContent = `${clickCount} / 12`;
+  if(clickCount === 12) cEl.classList.add('done');
+
+  /* draw connecting line */
+  points.push({x:cx, y:cy});
+  if(points.length > 1){
+    const prev = points[points.length - 2];
+    const curr = points[points.length - 1];
+    ctx.beginPath();
+    ctx.moveTo(prev.x, prev.y);
+    ctx.lineTo(curr.x, curr.y);
+    ctx.strokeStyle = 'rgba(255,180,200,.55)';
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+  }
+
+  /* show popup */
+  showMsg(WORDS[i].p, WORDS[i].t, WORDS[i].h);
+
+  /* burst */
+  burst(cx, cy, 14);
+
+  /* final celebration */
+  if(clickCount === 12){
+    for(let k=0;k<6;k++)
+      setTimeout(()=> burst(
+        Math.random()*window.innerWidth,
+        Math.random()*window.innerHeight*.85,
+        12
+      ), k*200);
+    setTimeout(()=> document.getElementById('final').classList.add('show'), 1400);
+  }
+}
+
+/* ═══ POPUP ═══ */
+function showMsg(panda, text, hearts){
+  document.getElementById('msgPanda').textContent  = panda;
+  document.getElementById('msgText').textContent   = text;
+  document.getElementById('msgHearts').textContent = hearts;
+
+  const el = document.getElementById('msg');
+  el.classList.remove('show');
+  void el.offsetWidth;          /* force reflow → re-trigger animation */
+  el.classList.add('show');
+
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(()=> el.classList.remove('show'), 2600);
+}
+
+/* ═══ BURST ═══ */
+function burst(cx, cy, n){
+  const B = ['❤️','🌸','💕','🐼','💗','✨','💝','🌹'];
+  for(let i=0;i<n;i++){
+    const el = document.createElement('div');
+    el.className = 'burst';
+    el.textContent = B[Math.floor(Math.random()*B.length)];
+    const a = (Math.PI*2*i/n) + Math.random()*.5;
+    const d = 55 + Math.random()*130;
+    el.style.cssText = `left:${cx}px;top:${cy}px;font-size:${.9+Math.random()*1.1}rem;--bx:${Math.cos(a)*d}px;--by:${Math.sin(a)*d}px;animation-delay:${Math.random()*.12}s;`;
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 1200);
+  }
+}
+</script>
+
 </body>
 </html>

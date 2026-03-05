@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نجوم الحب</title>
+
+<style>
+
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  font-family:sans-serif;
+  background: radial-gradient(circle at top, #ff4b6e, #8b0030);
+  position:relative;
+}
+
+/* canvas للخطوط */
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+  pointer-events:none;
+}
+
+/* النجوم */
+.star{
+  position:absolute;
+  font-size:26px;
+  color:white;
+  cursor:pointer;
+  transition:transform .2s;
+}
+
+.star:hover{
+  transform:scale(1.4);
+}
+
+/* صندوق الرسائل */
+.message{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:#ffc1dd;
+  padding:25px 40px;
+  border-radius:20px;
+  font-size:22px;
+  color:#8b0030;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+  display:none;
+  text-align:center;
+}
+
+/* القلوب */
+.heart{
+  position:absolute;
+  color:#ff9ecb;
+  font-size:20px;
+  animation:float 8s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+/* الباندا */
+.panda{
+  position:absolute;
+  font-size:40px;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="lines"></canvas>
+
+<div id="sky"></div>
+<div class="message" id="messageBox"></div>
+
+<script>
+
+const words = [
+"بحبك",
+"ضحكتك",
+"شجاعتك",
+"حنانك عليا",
+"اهتمامك بيا",
+"فهمك ليا",
+"حلوة في كل الأوقات",
+"عنادك",
+"عصبيتك",
+"طريقة كلامك",
+"هدوئك",
+"باندتي"
+]
+
+const sky = document.getElementById("sky")
+const msg = document.getElementById("messageBox")
+
+/* canvas */
+const canvas = document.getElementById("lines")
+const ctx = canvas.getContext("2d")
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+let clickedStars = []
+
+/* رسم خط بين نجمتين */
+function drawLine(a,b){
+
+ctx.strokeStyle="#ffd1ec"
+ctx.lineWidth=2
+
+ctx.beginPath()
+ctx.moveTo(a.x,a.y)
+ctx.lineTo(b.x,b.y)
+ctx.stroke()
+
+}
+
+/* رسالة النهاية */
+function showFinalMessage(){
+
+msg.innerHTML="✨ اكتشفت كل النجوم… <br><br> أنا بحبك في كل تفاصيلك ❤️"
+msg.style.display="block"
+
+}
+
+/* إنشاء النجوم */
+words.forEach(word=>{
+
+const star = document.createElement("div")
+star.className="star"
+star.innerHTML="⭐"
+
+const x=Math.random()*95
+const y=Math.random()*90
+
+star.style.left=x+"vw"
+star.style.top=y+"vh"
+
+star.dataset.word=word
+
+star.onclick=()=>{
+
+msg.innerText=word
+msg.style.display="block"
+
+const rect=star.getBoundingClientRect()
+
+const point={
+x:rect.left+12,
+y:rect.top+12
+}
+
+clickedStars.push(point)
+
+if(clickedStars.length>1){
+drawLine(clickedStars[clickedStars.length-2],point)
+}
+
+if(clickedStars.length===12){
+showFinalMessage()
+}
+
+}
+
+sky.appendChild(star)
+
+})
+
+/* القلوب */
+for(let i=0;i<25;i++){
+
+const heart=document.createElement("div")
+heart.className="heart"
+heart.innerHTML="❤"
+
+heart.style.left=Math.random()*100+"vw"
+heart.style.animationDuration=(5+Math.random()*5)+"s"
+
+document.body.appendChild(heart)
+
+}
+
+/* الباندا */
+for(let i=0;i<10;i++){
+
+const panda=document.createElement("div")
+panda.className="panda"
+panda.innerHTML="🐼"
+
+panda.style.top=Math.random()*90+"vh"
+panda.style.left=Math.random()*95+"vw"
+
+document.body.appendChild(panda)
+
+}
+
+</script>
+
+</body>
+</html>

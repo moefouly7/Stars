@@ -8,11 +8,11 @@ from scipy.stats import poisson
 from io import StringIO
 import requests, json, warnings
 warnings.filterwarnings("ignore")
-HOME_TEAM = "Aston Villa"
-AWAY_TEAM = "West Ham"
+HOME_TEAM = "Liverpool"
+AWAY_TEAM = "Arsenal"
 LEAGUE_CODE = "E0"
 LEAGUE_NAME = "EPL"
-MATCH_DATE = "2026-03-16"
+MATCH_DATE = "2026-03-17"
 SEASONS = ["2223", "2324", "2425"]
 MAX_GOALS = 8
 EV_THRESHOLD = 0.05
